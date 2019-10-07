@@ -13,6 +13,8 @@ This script initiates and terminates through a cron job.
 
 Cron parameters: 10 09 * * 1 python /path/repbot_prod.py
 
-FRAMEWORK: Selenium WebDriver
+FRAMEWORK:
+Selenium WebDriver
 
-LICENSE: Selenium is an open source software, released under the Apache 2.0 license
+LICENSE:
+Selenium is an open source software, released under the Apache 2.0 license

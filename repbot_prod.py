@@ -10,6 +10,7 @@ email = smtplib.SMTP("smtp.gmail.com", 587)
 
 
 def main():
+    
     # Initialize Driver
     options = Options()
     options.headless = True
@@ -19,6 +20,7 @@ def main():
 
 
 def script(driver):
+
     # Login Page
     elem_login = WebDriverWait(driver, 20).until(
         EC.presence_of_element_located((By.ID, "ctl00_ContentPlaceHolder1_userid")))

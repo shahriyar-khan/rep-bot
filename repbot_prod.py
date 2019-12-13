@@ -6,105 +6,75 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.options import Options
 import smtplib
 
-sendEmail = smtplib.SMTP("smtp.gmail.com", 587)
-messageYes = "\nREP Bot: You successfully claimed a study!"
-messageNo = "\nREP Bot: No studies were found at this time!"
-messageClaimed = "\nREP Bot: You've already claimed this study!"
+email = smtplib.SMTP("smtp.gmail.com", 587)
 
 
 def main():
-    # Initialize ChromeDriver and get URL
-    initChromeDriver()
-    # Identify login elements and login with credentials
-    loginPage()
-    # Proceed to view studies from home page
-    homePage()
-    # Available study = view available studies
-    # No studies = print text placeholder and quit driver
-    listPage()
-    # View available studies again
-    studiesPage()
-    # Proceeds to final sign-up confirmation page
-    # Return warning message if study is already claimed and quit driver
-    signupPage()
-    # Sign-up/claim the available study. Return success after sign-up is successful.
-    confirmPage()
-    # Quit driver and flush previous data
-    quitDriver()
-
-
-def initChromeDriver():
-    global driver
+    # Initialize Driver
     options = Options()
     options.headless = True
     driver = webdriver.Chrome("/usr/bin/chromedriver", options=options)
     driver.get("https://uta-cobsubjectpool.sona-systems.com/")
+    script(driver)
 
 
-def loginPage():
-    elemLogin = WebDriverWait(driver, 20).until(
+def script(driver):
+    # Login Page
+    elem_login = WebDriverWait(driver, 20).until(
         EC.presence_of_element_located((By.ID, "ctl00_ContentPlaceHolder1_userid")))
-    elemLogin.click()
-    elemLogin.send_keys("username")
-    elemPass = driver.find_element(By.ID, "ctl00_ContentPlaceHolder1_pw")
-    elemPass.click()
-    elemPass.send_keys("password")
-    elemLoginbtn = driver.find_element(By.ID, "ctl00_ContentPlaceHolder1_default_auth_button")
-    elemLoginbtn.click()
+    elem_login.click()
+    elem_login.send_keys("username")
+    elem_pass = driver.find_element(By.ID, "ctl00_ContentPlaceHolder1_pw")
+    elem_pass.click()
+    elem_pass.send_keys("password")
+    elem_loginbtn = driver.find_element(By.ID, "ctl00_ContentPlaceHolder1_default_auth_button")
+    elem_loginbtn.click()
 
-
-def homePage():
-    elemView = WebDriverWait(driver, 20).until(
+    # Home Page
+    elem_view = WebDriverWait(driver, 20).until(
         EC.presence_of_element_located((By.ID, "lnkStudySignupLink")))
-    elemView.click()
+    elem_view.click()
 
-
-def listPage():
-    listPageButton = "ctl00_ContentPlaceHolder1_repStudentStudies_ctl00_HyperlinkStudentTimeSlot"
+    # List Page
+    list_btn = "ctl00_ContentPlaceHolder1_repStudentStudies_ctl00_HyperlinkStudentTimeSlot"
     try:
-        elemStudy = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.ID, listPageButton)))
-        elemStudy.click()
+        elem_study = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, list_btn)))
+        elem_study.click()
     except TimeoutException:
         driver.quit()
-        sendEmail.starttls()
-        sendEmail.login("email_id", "email_id")
-        sendEmail.sendmail("email_id", "email_id", messageNo)
-        sendEmail.quit()
+        email.starttls()
+        email.login("email_id", "email_id")
+        email.sendmail("email_id", "email_id", "\nREP Bot: No studies were found at this time!")
+        email.quit()
         exit()
 
-
-def studiesPage():
-    elemList = WebDriverWait(driver, 10).until(
+    # Studies Page
+    elem_list = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.ID, "ctl00_ContentPlaceHolder1_lnkNonAdmin")))
-    elemList.click()
+    elem_list.click()
 
-
-def signupPage():
+    # Signup Page
     try:
-        elemSignUp = WebDriverWait(driver, 10).until(
+        elem_signup = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, "ctl00_ContentPlaceHolder1_repTimeSlots_ctl00_Submit_Button")))
-        elemSignUp.click()
+        elem_signup.click()
     except TimeoutException:
         driver.quit()
-        sendEmail.starttls()
-        sendEmail.login("email_id", "email_id")
-        sendEmail.sendmail("email_id", "email_id", messageClaimed)
-        sendEmail.quit()
+        email.starttls()
+        email.login("email_id", "email_id")
+        email.sendmail("email_id", "email_id", "\nREP Bot: You've already claimed this study!")
+        email.quit()
         exit()
 
-
-def confirmPage():
-    elemConfirm = WebDriverWait(driver, 10).until(
+    # Confirmation Page
+    elem_confirm = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.ID, "ctl00_ContentPlaceHolder1_Submit_Button")))
-    elemConfirm.click()
-    sendEmail.starttls()
-    sendEmail.login("email_id", "email_id")
-    sendEmail.sendmail("email_id", "email_id", messageYes)
-    sendEmail.quit()
-
-
-def quitDriver():
+    elem_confirm.click()
+    email.starttls()
+    email.login("email_id", "email_id")
+    email.sendmail("email_id", "email_id", "\nREP Bot: You successfully claimed a study!")
+    email.quit()
     driver.quit()
 
 
